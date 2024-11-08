@@ -1,140 +1,96 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
 
-struct node
-{
+struct node {
     char data;
     node* next;
 };
 
-class Linked_list_PQ
-{
+class Link_listPQ {
 private:
     node* front[4];
     node* rear[4];
 
 public:
-    Linked_list_PQ()
-    {
-        for(int i=0; i<4; ++i)
-        {
+    Link_listPQ() {
+        for (int i = 0; i < 4; ++i) {
             front[i] = nullptr;
             rear[i] = nullptr;
         }
     }
 
-
-    bool isEmpty(int row)
-    {
-        return front[row]==nullptr;
+    bool isEmpty(int row) {
+        return front[row] == nullptr;
     }
 
-    void ENQ(int row, char data)
-    {
+    void Enqueue(int row, char val) {
         node* temp = new node;
-        temp->data = data;
+        temp->data = val;
         temp->next = nullptr;
 
-
-        if(isEmpty(row))
-        {
+        if (isEmpty(row)) {
             front[row] = rear[row] = temp;
-        }
-
-        else
-        {
-
+            rear[row]->next = front[row];  // Make it circular
+        } else {
             rear[row]->next = temp;
             rear[row] = temp;
+            rear[row]->next = front[row];  // Maintain circular link
         }
-
-        cout << "Enqueued " << data << " to row" << row+1 << endl;
-
     }
 
-
-    void DEQ(int row)
-    {
-
-        if(isEmpty(row))
-        {
-            cout << "Row " << row + 1 << " is empty";
+    void Dequeue(int row) {
+        if (isEmpty(row)) {
+            cout << "Queue is Empty for row " << row << endl;
             return;
         }
+
         node* temp = front[row];
-        cout << "Dequeued " << temp->data << " from row " << row+1;
-        front[row] = front[row]->next;
-        if(front[row]==nullptr)
-        {
-            rear[row]=nullptr;
+
+        // If there's only one node, set front and rear to nullptr
+        if (front[row] == rear[row]) {
+            front[row] = rear[row] = nullptr;
+        } else {
+            front[row] = front[row]->next;
+            rear[row]->next = front[row];  // Maintain circular link
         }
 
         delete temp;
     }
 
-
-    void display()
-    {
-        for(int i=0; i<4; ++i)
-        {
-            if(!isEmpty(i))
-            {
-                cout << "Row " << i+1 << ": ";
-                node* current = front[i];
-                while(current!=NULL)
-                {
-                    cout << current->data << " ";
-                    current = current->next;
-                }
-                cout << endl;
+    void Display() {
+        for (int i = 0; i < 4; ++i) {
+            if (isEmpty(i)) {
+                cout << "Queue is Empty for row " << i << endl;
+                continue;
             }
-                else
-                {
-                    cout << "Row " << i+1 << " is Empty" << endl;
-                }
 
+            node* curr = front[i];
+            do {
+                cout << curr->data << " ";
+                curr = curr->next;
+            } while (curr != front[i]);  // Stop when we loop back to the front
+            cout << endl;
         }
     }
 
-    ~Linked_list_PQ() {
-        // Destructor to free all nodes in the priority queue
+    ~Link_listPQ() {
         for (int i = 0; i < 4; ++i) {
             while (!isEmpty(i)) {
-                DEQ(i);
+                Dequeue(i);
             }
         }
     }
-
-
-
 };
 
 int main() {
-    Linked_list_PQ pq;
-
-    // Enqueue elements into different rows
-    pq.ENQ(0, 'A');
-    pq.ENQ(1, 'B');
-    pq.ENQ(1, 'C');
-    pq.ENQ(1, 'D');
-    pq.ENQ(2, 'E');
-    pq.ENQ(2, 'F');
-    pq.ENQ(3, 'G');
-    pq.ENQ(3, 'H');
-    pq.ENQ(3, 'I');
-
-    // Display the priority queue
-    cout << "\nDisplaying the Priority Queue:\n";
-    pq.display();
-
-    // Dequeue elements and display the queue after each operation
-    pq.DEQ(2);
-    cout << "\nAfter dequeuing from row 3:\n";
-    pq.display();
-
-    pq.DEQ(3);
-    cout << "\nAfter dequeuing from row 4:\n";
-    pq.display();
+    Link_listPQ o1;
+    o1.Enqueue(0, 'A');
+    o1.Enqueue(0, 'B');
+    o1.Enqueue(1, 'C');
+    o1.Enqueue(1, 'D');
+    o1.Enqueue(2, 'E');
+    o1.Enqueue(3, 'F');
+    o1.Display();
 
     return 0;
 }
