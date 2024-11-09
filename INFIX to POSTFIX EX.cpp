@@ -57,6 +57,31 @@ int precedence(char symbol) {
     }
 }
 
+int post_eval(){
+  int i=0;
+  for(i =0;i<strlen(postfix);++i){
+    if(postfix[i] >= '0' && postfix[i] <= '9'){
+      push(postfix[i]-'0');
+    }
+    else{
+      int a = pop(); int b = pop();
+      switch(postfix[i]){
+        case '+':
+        push(b+a); break;
+        case '-':
+        push(b-a); break;
+        case '*':
+        push(b*a); break;
+        case '/':
+        push(b/a); break;
+        case '^':
+        push(b^a); break;
+      }
+    }
+  }
+  return pop();
+}
+
 void inTOpost() {
     int i, j = 0;
     char symbol, next;
@@ -99,7 +124,10 @@ int main() {
 
     inTOpost();
     print();
+    cout << endl;
+    
+    int result = post_eval();
+    cout <<"Here is your Answer: " << result << endl;
 
     return 0;
 }
-
