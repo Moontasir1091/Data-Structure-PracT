@@ -1,96 +1,109 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
 
-struct node {
-    char data;
+struct node
+{
+    int data;
+    int priority;
     node* next;
 };
 
-class Link_listPQ {
-private:
-    node* front[4];
-    node* rear[4];
+class Priority_Queue
+{
+    node* Front;
 
 public:
-    Link_listPQ() {
-        for (int i = 0; i < 4; ++i) {
-            front[i] = nullptr;
-            rear[i] = nullptr;
-        }
+    Priority_Queue()
+    {
+        Front = nullptr;
+    }
+    bool isEmpty()
+    {
+        return Front==nullptr;
     }
 
-    bool isEmpty(int row) {
-        return front[row] == nullptr;
-    }
-
-    void Enqueue(int row, char val) {
+    void enqueued(int data,int priority)
+    {
         node* temp = new node;
-        temp->data = val;
+        temp->data = data;
+        temp->priority = priority;
         temp->next = nullptr;
 
-        if (isEmpty(row)) {
-            front[row] = rear[row] = temp;
-            rear[row]->next = front[row];  // Make it circular
-        } else {
-            rear[row]->next = temp;
-            rear[row] = temp;
-            rear[row]->next = front[row];  // Maintain circular link
+        if(isEmpty() || priority < Front->priority)  /// If Current priority is Higher;
+        {
+            temp->next = Front;
+            Front = temp;
         }
+        else
+        {
+            node* current = Front;
+            while(current->next!=NULL && current->next->priority <= priority)
+            {
+
+                current = current->next;
+            }
+            temp->next = current->next;
+            current->next = temp;
+        }
+
+        cout << "Enqueued: " << data << " with priority: " << priority << endl;
+
     }
 
-    void Dequeue(int row) {
-        if (isEmpty(row)) {
-            cout << "Queue is Empty for row " << row << endl;
+    void Dequeued()
+    {
+        if(isEmpty())
+        {
+            cout << "Priority Queue is empty" << endl;
             return;
         }
 
-        node* temp = front[row];
-
-        // If there's only one node, set front and rear to nullptr
-        if (front[row] == rear[row]) {
-            front[row] = rear[row] = nullptr;
-        } else {
-            front[row] = front[row]->next;
-            rear[row]->next = front[row];  // Maintain circular link
-        }
-
+        int value = Front->data;
+        node* temp = Front;
+        Front = Front->next;
         delete temp;
+
+        cout << "Dequeued value: " << value << endl;
     }
 
-    void Display() {
-        for (int i = 0; i < 4; ++i) {
-            if (isEmpty(i)) {
-                cout << "Queue is Empty for row " << i << endl;
-                continue;
-            }
-
-            node* curr = front[i];
-            do {
-                cout << curr->data << " ";
-                curr = curr->next;
-            } while (curr != front[i]);  // Stop when we loop back to the front
-            cout << endl;
+    void display()
+    {
+        if (isEmpty())
+        {
+            cout << "Priority Queue is empty" << endl;
+            return;
         }
+
+        node* current = Front;
+        cout << "Priority Queue elements (from Front to rear): ";
+        while (current != nullptr)
+        {
+            cout << "(" << current->data << ", " << current->priority << ") ";
+            current = current->next;
+        }
+        cout << endl;
     }
 
-    ~Link_listPQ() {
-        for (int i = 0; i < 4; ++i) {
-            while (!isEmpty(i)) {
-                Dequeue(i);
-            }
-        }
-    }
+
+
 };
 
-int main() {
-    Link_listPQ o1;
-    o1.Enqueue(0, 'A');
-    o1.Enqueue(0, 'B');
-    o1.Enqueue(1, 'C');
-    o1.Enqueue(1, 'D');
-    o1.Enqueue(2, 'E');
-    o1.Enqueue(3, 'F');
-    o1.Display();
+int main(){
+    Priority_Queue obj;
 
-    return 0;
+obj.enqueued(10,2);
+obj.enqueued(11,3);
+obj.enqueued(12,6);
+obj.enqueued(13,20);
+obj.enqueued(19,7);
+
+cout << endl << endl;
+obj.display();
+
+obj.Dequeued();
+cout << endl << endl;
+obj.display();
+
+
+
 }
